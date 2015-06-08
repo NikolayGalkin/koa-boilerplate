@@ -6,14 +6,13 @@ var nconf       = require('nconf');
 
 var app = koa();
 
-app.services = require('./boot');
-
 app.use(logger());
 app.use(bodyParser());
 app.use(cors());
 
-app.use(require('./routes/users').routes());
+app.services = require('./boot');
 
+app.use(require('./routes/users').routes());
 
 // error handler
 app.use(function *errorHandler(next) {
@@ -27,7 +26,7 @@ app.use(function *errorHandler(next) {
 });
 
 app.on('error', function(err) {
-    console.error('Server error: ' + err.message);
+    console.error('Server error: ' + err.stack);
 });
 
 

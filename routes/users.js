@@ -35,14 +35,13 @@ router
     })
 
     .put('/:id', function *() {
-        this.request.body && delete this.request.body._id;
-        _.extend(this.item, this.request.body);
-        this.body = yield this.user.save();
+        this.request.body && delete this.request.body._id && _.extend(this.item, this.request.body);
+        this.body = yield this.item.save();
         this.status = 202;
     })
 
     .patch('/:id', function *() {
-        _.extend(this.item, this.request.body);
+        this.request.body && delete this.request.body._id && _.extend(this.item, this.request.body);
         this.body = yield this.user.save();
         this.status = 202;
     })
