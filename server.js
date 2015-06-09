@@ -2,16 +2,22 @@ var koa         = require('koa');
 var logger      = require('koa-logger');
 var bodyParser  = require('koa-bodyparser');
 var cors        = require('koa-cors');
+var jwt         = require('koa-jwt');
 var nconf       = require('nconf');
 
 var app = koa();
+
+app.services = require('./boot');
+
+// @todo
+// remove unless
+app.use(jwt({ secret: nconf.get('services:auth:jwt:secret') }).unless({path: ['/auth/signin', '/auth/signup']}));
 
 app.use(logger());
 app.use(bodyParser());
 app.use(cors());
 
-app.services = require('./boot');
-
+app.use(require('./routes/auth').routes());
 app.use(require('./routes/users').routes());
 
 // error handler

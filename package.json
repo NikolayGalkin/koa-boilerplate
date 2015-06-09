@@ -9,10 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^0.8.3",
     "glob": "^5.0.10",
     "koa": "^0.21.0",
     "koa-bodyparser": "^2.0.0",
     "koa-cors": "0.0.14",
+    "koa-jwt": "^1.1.0",
     "koa-logger": "^1.2.2",
     "koa-router": "^5.1.1",
     "lodash": "^3.9.3",

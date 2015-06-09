@@ -6,6 +6,11 @@
   "services": {
     "mongo": {
       "uri": "mongodb://localhost/api"
+    },
+    "auth": {
+      "jwt": {
+        "secret": "this is a super puper secret"
+      }
     }
   }
 }
