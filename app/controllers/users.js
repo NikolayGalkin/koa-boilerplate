@@ -3,8 +3,8 @@ var mongoose = require('mongoose');
 var User     = mongoose.model('User');
 
 function *userParam(next) {
-    if (!this.params.user) {
-        return yield next;
+    if (!mongoose.Types.ObjectId.isValid(this.params.user)) {
+        this.throw(422, 'Invalid User id')
     }
     this.item = yield User.findById(this.params.user);
     if (!this.item) {
@@ -16,7 +16,7 @@ function *userParam(next) {
 
 module.exports = new Resource('users', {
     index: function *() {
-        this.body = yield User.find().exec();
+        this.body = yield User.find();
     },
     create: function *() {
         var user = new User(this.request.body);
