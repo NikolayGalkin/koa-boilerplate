@@ -1,22 +1,34 @@
-var mongoose   = require('mongoose');
-var timestamps = require('mongoose-timestamp');
+var mongoose        = require('mongoose');
+var timestamps      = require('mongoose-timestamp');
+var uniqueValidator = require('mongoose-unique-validator');
+var bcrypt          = require('bcrypt');
 
 var schema = new mongoose.Schema({
-    email:      {type: String, trim: true, required: true, validate: mongoose.validation.emailValidator},
+    email:      {type: String, trim: true, required: true, unique: true, validate: mongoose.validation.emailValidator},
     password:   {type: String, trim: true, required: true},
     firstName:  {type: String, trim: true, required: true, validate: mongoose.validation.firstNameValidator},
-    lastName:   {type: String, trim: true, required: true, validate: mongoose.validation.lastNameValidator},
+    lastName:   {type: String, trim: true, required: true, validate: mongoose.validation.lastNameValidator}
 });
 
 schema.plugin(timestamps, {createdAt: 'created', updatedAt: 'updated'});
+schema.plugin(uniqueValidator, 'Error, expected {PATH} to be unique');
 
-schema.path('email').validate(function(value, next) {
-    if (!this.isModified(value)) {
-        return next(true);
+schema.pre('save', function(next) {
+    var _this = this;
+    if (!_this.isModified('password')) {
+        return next();
     }
-    this.findOne({email: value}, function(err, item) {
-        next(item == null);
-    })
-}, 'Email already in use');
+    bcrypt.hash(this.password, 10, function(err, hash) {
+        if (err) {
+            return next(err);
+        }
+        _this.password = hash;
+        next()
+    });
+});
+
+schema.methods.comparePassword = function(password, next) {
+    bcrypt.compare(password, this.password, next);
+};
 
 mongoose.model('User', schema);
