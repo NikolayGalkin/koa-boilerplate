@@ -26,6 +26,7 @@ module.exports = new Resource('users', {
     }]
 }).middleware();
 
+
 function *userParam(next) {
     this.checkParams('user').isObjectId();
     if (this.errors) {

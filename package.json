@@ -11,6 +11,7 @@
   "dependencies": {
     "acl": "^0.4.7",
     "bcrypt": "^0.8.3",
+    "bluebird": "^2.9.31",
     "co": "^4.5.4",
     "create-error": "^0.3.1",
     "glob": "^5.0.10",
