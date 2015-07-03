@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "acl": "^0.4.7",
     "bcrypt": "^0.8.3",
     "co": "^4.5.4",
     "create-error": "^0.3.1",

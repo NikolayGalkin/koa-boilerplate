@@ -1,11 +1,6 @@
-var mongoose    = require('mongoose');
-var jwt         = require('koa-jwt');
-var nconf       = require('nconf');
+var jwt = require('koa-jwt');
 
 var router = module.exports = require('koa-router')({prefix: '/auth'});
-
-var User   = mongoose.model('User');
-
 
 router
     .post('/signin', function *() {
@@ -17,13 +12,13 @@ router
 
         var email    = this.request.body.email;
         var password = this.request.body.password;
-        var user = yield User.authenticate(email, password, this);
-        var token = jwt.sign(user, nconf.get('auth:jwt:secret'), { expiresInMinutes: 60 * 5 });
+        var user = yield this.db.model('User').authenticate(email, password, this);
+        var token = jwt.sign(user, this.config.auth.jwt.secret, { expiresInMinutes: 60 * 5 });
         this.body = {token: token};
     })
 
     .post('/signup', function *() { // duplicate of POST /users
-        var user = new User(this.request.body);
+        var user = new this.db.model('User')(this.request.body);
         yield user.save();
         this.body = user;
         this.status = 201;

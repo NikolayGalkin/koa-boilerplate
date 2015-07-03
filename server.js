@@ -4,14 +4,13 @@ var bodyParser  = require('koa-bodyparser');
 var cors        = require('koa-cors');
 var jwt         = require('koa-jwt');
 var validate    = require('koa-validate');
-var nconf       = require('nconf');
-var mongoose    = require('mongoose');
 var _           = require('lodash');
-
+var config      = require('./lib/config');
+var mongo       = require('./lib/mongo');
+var acl         = require('./lib/acl');
 
 var app = koa();
 
-app.services = require('./boot');
 
 // error handler
 app.use(function *errorHandler(next) {
@@ -29,15 +28,16 @@ app.use(function *errorHandler(next) {
             success: false,
             name: err.name,
             status: err.status || 500,
-            message: err.message || 'Internal Error'
+            message: err.message || 'Internal Error',
+            stack: this.app.env === 'development' ? err.stack : ''
         };
         if (err.errors) {
-            this.body.errors = _.map(err.errors, function(error) {
+            this.body.errors = err.errors.map(function(error) {
                 return _.pick(error, 'message', 'path');
             })
         }
         if (this.errors) {
-            this.body.errors = _.map(this.errors, function(error) {
+            this.body.errors = this.errors.map(function(error) {
                 var path = Object.keys(error)[0];
                 return {
                     path: path,
@@ -48,22 +48,19 @@ app.use(function *errorHandler(next) {
     }
 });
 
-// @todo
-// remove unless
-app.use(jwt({secret: nconf.get('auth:jwt:secret') }).unless({path: ['/auth/signin', '/auth/signup']}));
-
 app.use(logger());
 app.use(bodyParser());
 app.use(cors());
+app.use(config.middleware());
+app.use(mongo());
 app.use(validate());
+app.use(require('./lib/app-validation')());
+app.use(jwt({secret: config.config.auth.jwt.secret}).unless({path: ['/auth/signin', '/auth/signup']}));
+app.use(acl());
+
 app.use(require('./app/controllers/users').middleware());
 app.use(require('./app/controllers/auth').routes());
 
-//app.on('error', function(err) {
-//    console.error('Server error: ' + err.stack);
-//});
-
-
-app.listen(nconf.get('app:port'), nconf.get('app:host'), function () {
-    console.log('Listen on: ' + nconf.get('app:host') + ':' + nconf.get('app:port'));
+app.listen(config.config.app.port, config.config.app.host, function () {
+    console.log('Listen on: ' + config.config.app.host + ':' + config.config.app.port);
 });

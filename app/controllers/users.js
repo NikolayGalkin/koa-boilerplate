@@ -1,26 +1,12 @@
 var Resource = require('koa-resource-router');
-var mongoose = require('mongoose');
-var User     = mongoose.model('User');
-
-function *userParam(next) {
-    this.checkParams('user').isObjectId();
-    if (this.errors) {
-        this.throw(422, 'Invalid User id')
-    }
-    this.item = yield User.findById(this.params.user);
-    if (!this.item) {
-        this.throw(404, 'User not found');
-    }
-    yield next
-}
 
 
 module.exports = new Resource('users', {
     index: function *() {
-        this.body = yield User.find();
+        this.body = yield this.db.model('User').find();
     },
     create: function *() {
-        var user = new User(this.request.body);
+        var user = new this.db.model('User')(this.request.body);
         yield user.save();
         this.body = user;
         this.status = 201;
@@ -39,3 +25,15 @@ module.exports = new Resource('users', {
         this.status = 204;
     }]
 });
+
+function *userParam(next) {
+    this.checkParams('user').isObjectId();
+    if (this.errors) {
+        this.throw(422, 'Invalid User id')
+    }
+    this.item = yield this.db.model('User').findById(this.params.user);
+    if (!this.item) {
+        this.throw(404, 'User not found');
+    }
+    yield next
+}
