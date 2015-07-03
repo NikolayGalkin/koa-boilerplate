@@ -24,7 +24,7 @@ module.exports = new Resource('users', {
         yield this.item.remove();
         this.status = 204;
     }]
-});
+}).middleware();
 
 function *userParam(next) {
     this.checkParams('user').isObjectId();
