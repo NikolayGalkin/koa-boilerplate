@@ -1,13 +1,7 @@
 var koa         = require('koa');
-var logger      = require('koa-logger');
-var bodyParser  = require('koa-bodyparser');
-var cors        = require('koa-cors');
 var jwt         = require('koa-jwt');
-var validate    = require('koa-validate');
 var _           = require('lodash');
 var config      = require('./lib/config');
-var mongo       = require('./lib/mongo');
-var acl         = require('./lib/acl');
 
 var app = koa();
 
@@ -48,15 +42,17 @@ app.use(function *errorHandler(next) {
     }
 });
 
-app.use(logger());
-app.use(bodyParser());
-app.use(cors());
-app.use(config.middleware());
-app.use(mongo());
-app.use(validate());
-app.use(require('./lib/app-validation')());
+app.use(require('koa-logger')());
+app.use(require('koa-bodyparser')());
+app.use(require('koa-cors')());
+app.use(require('koa-validate')());
+
 app.use(jwt({secret: config.config.auth.jwt.secret}).unless({path: ['/auth/signin', '/auth/signup']}));
-app.use(acl());
+
+app.use(config.middleware());
+app.use(require('./lib/mongo')());
+app.use(require('./lib/app-validation')());
+app.use(require('./lib/acl')());
 
 app.use(require('./app/controllers/users').middleware());
 app.use(require('./app/controllers/auth').routes());
