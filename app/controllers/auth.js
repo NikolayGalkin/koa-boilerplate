@@ -7,7 +7,7 @@ router
         this.checkBody('email').notEmpty().isEmail('Invalid Email').trim().toLow();
         this.checkBody('password').notEmpty().len(6, 20).trim();
         if (this.errors) {
-            this.throw(422, 'Invalid email or password', {errors: this.errors});
+            this.throw(422, 'Invalid email or password');
         }
 
         var email    = this.request.body.email;

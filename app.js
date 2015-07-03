@@ -11,9 +11,7 @@ app.use(require('./lib/jwt')(app));
 app.use(require('./lib/mongo')(app));
 app.use(require('./lib/validation')());
 app.use(require('./lib/acl')(app));
-
-app.use(require('./app/controllers/users'));
-app.use(require('./app/controllers/auth'));
+app.use(require('./lib/router')(app));
 
 
 if (!module.parent) {
