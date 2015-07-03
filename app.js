@@ -15,7 +15,7 @@ app.use(require('./lib/router')(app));
 
 
 if (!module.parent) {
-    app.listen(app.config.app.port, app.config.app.host, function () {
-        console.log('Listen on: ' + app.config.app.host + ':' + app.config.app.port);
-    });
+  app.listen(app.config.app.port, app.config.app.host, function() {
+    console.log('Listen on: ' + app.config.app.host + ':' + app.config.app.port);
+  });
 }
