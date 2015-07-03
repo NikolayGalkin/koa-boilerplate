@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 var User     = mongoose.model('User');
 
 function *userParam(next) {
-    if (!mongoose.Types.ObjectId.isValid(this.params.user)) {
+    this.checkParams('user').isObjectId();
+    if (this.errors) {
         this.throw(422, 'Invalid User id')
     }
     this.item = yield User.findById(this.params.user);

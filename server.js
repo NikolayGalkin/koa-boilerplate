@@ -6,7 +6,6 @@ var jwt         = require('koa-jwt');
 var validate    = require('koa-validate');
 var nconf       = require('nconf');
 var mongoose    = require('mongoose');
-var router      = require('./lib/router');
 var _           = require('lodash');
 
 
@@ -34,7 +33,16 @@ app.use(function *errorHandler(next) {
         };
         if (err.errors) {
             this.body.errors = _.map(err.errors, function(error) {
-                return _.pick(error, 'message', 'kind', 'path');
+                return _.pick(error, 'message', 'path');
+            })
+        }
+        if (this.errors) {
+            this.body.errors = _.map(this.errors, function(error) {
+                var path = Object.keys(error)[0];
+                return {
+                    path: path,
+                    message: error[path]
+                };
             })
         }
     }
@@ -42,13 +50,14 @@ app.use(function *errorHandler(next) {
 
 // @todo
 // remove unless
-//app.use(jwt({secret: nconf.get('auth:jwt:secret') }).unless({path: ['/auth/signin', '/auth/signup']}));
+app.use(jwt({secret: nconf.get('auth:jwt:secret') }).unless({path: ['/auth/signin', '/auth/signup']}));
 
 app.use(logger());
 app.use(bodyParser());
 app.use(cors());
 app.use(validate());
 app.use(require('./app/controllers/users').middleware());
+app.use(require('./app/controllers/auth').routes());
 
 //app.on('error', function(err) {
 //    console.error('Server error: ' + err.stack);

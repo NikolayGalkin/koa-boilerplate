@@ -27,8 +27,16 @@ schema.pre('save', function(next) {
     });
 });
 
-schema.methods.comparePassword = function(password, next) {
-    bcrypt.compare(password, this.password, next);
+schema.statics.authenticate = function *(email, password, app) {
+    var user = yield this.findOne({email: email});
+    if (!user) {
+        app.throw(422, 'Wrong email of password');
+    }
+    var isPasswordMatch = bcrypt.compareSync(password, user.password);
+    if (!isPasswordMatch) {
+        app.throw(422, 'Wrong email of password');
+    }
+    return user;
 };
 
 mongoose.model('User', schema);
