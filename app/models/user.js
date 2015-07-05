@@ -14,10 +14,10 @@ var schema = new mongoose.Schema({
    * @param {{validation:object}} mongoose
    */
   email: {type: String, trim: true, required: true, unique: true, validate: mongoose.validation.emailValidator},
-  password: {type: String, trim: true, required: true},
-  role: {type: String, trim: true, required: true, default: 'user', enum: ROLES},
-  firstName: {type: String, trim: true, required: true, validate: mongoose.validation.firstNameValidator},
-  lastName: {type: String, trim: true, required: true, validate: mongoose.validation.lastNameValidator}
+  password: {type: String, trim: true, required: true, select: false},
+  role: {type: String, trim: true, required: true, default: ROLE_USER, enum: ROLES},
+  firstName: {type: String, trim: true, required: true},
+  lastName: {type: String, trim: true, required: true}
 });
 
 schema.plugin(timestamps, {createdAt: 'created', updatedAt: 'updated'});
