@@ -11,6 +11,7 @@ describe('Users CRUD', function() {
 
     var users = [];
     var usersCount = _.random(3, 10);
+    var response;
 
     before(function*() {
       users = yield require('../../fixtures/users')(usersCount);
