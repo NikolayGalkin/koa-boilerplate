@@ -1,20 +1,9 @@
-module.exports = [
-  {
-    roles: 'guest',
-    allows: [
-      {resources: ['auth/signin', 'auth/signup'], permissions: 'post'}
-    ]
-  },
-  {
-    roles: 'user',
-    allows: [
-      {resources: ['/users'], permissions: 'get'}
-    ]
-  },
-  {
-    roles: 'admin',
-    allows: [
-      {resources: ['users'], permissions: '*'}
-    ]
+'use strict';
+let permissions = module.exports = {
+  guest:   ['auth:signin', 'auth:signup'],
+  user:    ['auth:signout', 'auth:profile', 'users:list', 'users:show'],
+  manager: {
+    extend:      'user',
+    permissions: ['users:create', 'users:update', 'users:destroy']
   }
-];
+};

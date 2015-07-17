@@ -38,7 +38,7 @@ schema.pre('save', function(next) {
 });
 
 schema.statics.authenticate = function*(email, password, app) {
-  let user = yield this.findOne({email: email});
+  let user = yield this.findOne({email: email}).select('email password role firstName lastName').exec();
   if (!user) {
     app.throw(422, 'Wrong email of password');
   }

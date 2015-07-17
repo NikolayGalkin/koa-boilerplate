@@ -1,26 +1,28 @@
 "use strict";
 let Resource = require('koa-resource-router');
+let app      = require('../../app');
+let User     = app.db.model('User');
 
 module.exports = new Resource('users', {
-  index: function*() {
-    this.body = yield this.db.model('User').find();
-  },
-  create: function*() {
-    let user = new this.db.model('User')(this.request.body);
+  index: [app.acl.can('users:list'), function*() {
+    this.body = yield User.find();
+  }],
+  create: [app.acl.can('users:create'), function*() {
+    let user = new User(this.request.body);
     yield user.save();
     this.body = user;
     this.status = 201;
-  },
-  show: [userParam, function*() {
+  }],
+  show: [app.acl.can('users:show'), userParam, function*() {
     this.body = this.item;
   }],
 
-  update: [userParam, function*() {
+  update: [app.acl.can('users:update'), userParam, function*() {
     this.request.body && delete this.request.body._id && delete this.request.body.email;
     yield this.item.set(this.request.body).save();
     this.body = this.item;
   }],
-  destroy: [userParam, function*() {
+  destroy: [app.acl.can('users:destroy'), userParam, function*() {
     yield this.item.remove();
     this.status = 204;
   }]
