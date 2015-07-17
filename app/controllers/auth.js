@@ -1,4 +1,5 @@
-var router = require('koa-router')({prefix: '/auth'});
+"use strict";
+let router = require('koa-router')({prefix: '/auth'});
 
 module.exports = router.routes();
 
@@ -10,15 +11,15 @@ router
       this.throw(422, 'Invalid email or password');
     }
 
-    var email = this.request.body.email;
-    var password = this.request.body.password;
-    var user = yield this.db.model('User').authenticate(email, password, this);
-    var token = this.jwt.sign(user, this.config.auth.jwt.secret, {expiresInMinutes: 60 * 5});
+    let email = this.request.body.email;
+    let password = this.request.body.password;
+    let user = yield this.db.model('User').authenticate(email, password, this);
+    let token = this.jwt.sign(user, this.config.auth.jwt.secret, {expiresInMinutes: 60 * 5});
     this.body = {token: token};
   })
 
   .post('/signup', function*() { // Duplicate of POST /users
-    var user = new this.db.model('User')(this.request.body);
+    let user = new this.db.model('User')(this.request.body);
     yield user.save();
     this.body = user;
     this.status = 201;

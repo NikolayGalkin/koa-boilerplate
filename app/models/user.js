@@ -1,15 +1,15 @@
-var mongoose = require('mongoose');
-var timestamps = require('mongoose-timestamp');
-var uniqueValidator = require('mongoose-unique-validator');
-var bcrypt = require('bcrypt');
+"use strict";
+let mongoose        = require('mongoose');
+let timestamps      = require('mongoose-timestamp');
+let uniqueValidator = require('mongoose-unique-validator');
+let bcrypt          = require('bcrypt');
 
 const ROLE_GUEST = 'guest';
 const ROLE_USER = 'user';
 const ROLE_ADMIN = 'admin';
 const ROLES = [ROLE_GUEST, ROLE_USER, ROLE_ADMIN];
 
-
-var schema = new mongoose.Schema({
+let schema = new mongoose.Schema({
   /**
    * @param {{validation:object}} mongoose
    */
@@ -24,7 +24,7 @@ schema.plugin(timestamps, {createdAt: 'created', updatedAt: 'updated'});
 schema.plugin(uniqueValidator, 'Error, expected {PATH} to be unique');
 
 schema.pre('save', function(next) {
-  var _this = this;
+  let _this = this;
   if (!_this.isModified('password')) {
     return next();
   }
@@ -38,11 +38,11 @@ schema.pre('save', function(next) {
 });
 
 schema.statics.authenticate = function*(email, password, app) {
-  var user = yield this.findOne({email: email});
+  let user = yield this.findOne({email: email});
   if (!user) {
     app.throw(422, 'Wrong email of password');
   }
-  var isPasswordMatch = bcrypt.compareSync(password, user.password);
+  let isPasswordMatch = bcrypt.compareSync(password, user.password);
   if (!isPasswordMatch) {
     app.throw(422, 'Wrong email of password');
   }

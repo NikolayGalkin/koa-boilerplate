@@ -1,12 +1,12 @@
-var Resource = require('koa-resource-router');
-
+"use strict";
+let Resource = require('koa-resource-router');
 
 module.exports = new Resource('users', {
   index: function*() {
     this.body = yield this.db.model('User').find();
   },
   create: function*() {
-    var user = new this.db.model('User')(this.request.body);
+    let user = new this.db.model('User')(this.request.body);
     yield user.save();
     this.body = user;
     this.status = 201;
