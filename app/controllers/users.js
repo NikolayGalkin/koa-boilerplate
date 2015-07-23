@@ -6,8 +6,9 @@ let User     = app.db.model('User');
 
 module.exports = new Resource('users', {
   index: [app.acl.can('users:list'), function*() {
-    this.body = yield User.find();
+    this.body = yield User.find({}, {__v: false, password: false});
   }],
+
   create: [app.acl.can('users:create'), function*() {
     this.checkBody('email').notEmpty().isEmail('Invalid Email').trim().toLow();
     this.checkBody('password').notEmpty().len(6, 20).trim();
@@ -23,6 +24,7 @@ module.exports = new Resource('users', {
     this.body = user;
     this.status = 201;
   }],
+
   show: [app.acl.can('users:show'), userParam, function*() {
     this.body = this.item;
   }],
@@ -39,6 +41,7 @@ module.exports = new Resource('users', {
     yield this.item.set(params).save();
     this.body = this.item;
   }],
+
   destroy: [app.acl.can('users:destroy'), userParam, function*() {
     yield this.item.remove();
     this.status = 204;
