@@ -4,4 +4,4 @@
 node_modules
 debug
 
-config/config.json
+.env
