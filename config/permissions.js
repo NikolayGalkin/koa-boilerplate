@@ -1,5 +1,5 @@
 'use strict';
-let permissions = module.exports = {
+const permissions = module.exports = {
   guest:   ['auth:signin', 'auth:signup'],
   user:    ['auth:signout', 'auth:profile', 'users:list', 'users:show'],
   manager: {

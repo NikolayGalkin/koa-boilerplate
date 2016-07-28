@@ -1,26 +1,15 @@
-var Monky     = require('monky');
-var faker     = require('faker');
-var Promise   = require('bluebird');
-var app       = require('../../app');
-var monky     = new Monky(app.db);
-var create    = Promise.promisify(monky.create, monky);
-var result    = [];
+const Monky = require('monky');
+const app = require('../../app');
+
+const monky = new Monky(app.db);
 
 monky.factory('User', {
-  email:     faker.internet.email(),
-  password:  faker.internet.password(),
-  firstName: faker.name.firstName(),
-  lastName:  faker.name.lastName()
+  email: 'email#n@email.com',
+  password: 'password#n',
+  firstName: 'FisrtName#n',
+  lastName: 'LastName#n'
 });
 
-module.exports = function*(num) {
-  for (var i = 0; i < num; i++) {
-    result.push(yield create('User', {
-      email:     faker.internet.email(),
-      password:  faker.internet.password(),
-      firstName: faker.name.firstName(),
-      lastName:  faker.name.lastName()
-    }))
-  }
-  return result
+module.exports = (num, done) => {
+  monky.createList('User', num, done);
 };

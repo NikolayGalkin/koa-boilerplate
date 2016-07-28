@@ -1,5 +1,0 @@
-{
-  "preset": "node-style-guide",
-  "requireTrailingComma": null,
-  "maximumLineLength": 120
-}
